@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from core.validators import validate_minutes
 from core.degrees_extractor import get_degrees
@@ -44,10 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Student(models.Model):
     """University student"""
     description = models.TextField(blank=True)
-    profile_image = models.ImageField(blank=True, null=True)
-    rating_count = models.PositiveIntegerField(default=0)
-    accumulated_rating = models.PositiveIntegerField(default=0)
-    available_time = models.DecimalField(default=1, max_digits=6, decimal_places=2, validators=[MinValueValidator(0), validate_minutes])
+    profile_image = models.ImageField(blank=True)
+    rating_count = models.PositiveIntegerField(blank=True, null=True, default=0)
+    accumulated_rating = models.PositiveIntegerField(blank=True, null=True, default=0)
+    available_time = models.DecimalField(blank=True, null=True, default=1, max_digits=6, decimal_places=2, validators=[MinValueValidator(0), validate_minutes])
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
     @property
@@ -95,9 +96,9 @@ class Collaboration(models.Model):
 class Competence(models.Model):
     """Competence that a user can have"""
     name = models.CharField(max_length=100)
-    students = models.ManyToManyField(Student, blank=True)
-    collaboration_requests = models.ManyToManyField(CollaborationRequest, blank=True)
-    collaborations = models.ManyToManyField(Collaboration, blank=True)
+    students = models.ManyToManyField(Student, blank=True, related_name='competences')
+    collaboration_requests = models.ManyToManyField(CollaborationRequest, blank=True, related_name='competences')
+    collaborations = models.ManyToManyField(Collaboration, blank=True, related_name='competences')
 
 
 class Degree(models.Model):
@@ -117,6 +118,13 @@ class Degree(models.Model):
         (SIXTH, '6th')
     ]
     name = models.CharField(max_length=1, choices=get_degrees())
-    higher_grade = models.CharField(max_length=1, choices=HIGHER_GRADE_CHOICES)
+    higher_grade = models.CharField(blank=True, max_length=1, choices=HIGHER_GRADE_CHOICES)
     finished = models.BooleanField()
-    students = models.ManyToManyField(Student)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='degrees')
+
+    def clean(self):
+        if self.finished == false and self.higher_grade == '':
+            raise ValidationError('The higher grade must not be blank')
+
+        if self.finished == true and self.higher_grade is not '':
+            raise ValidationError('You cannot specify a higher grade if the degree is finished')
