@@ -56,6 +56,9 @@ class Student(models.Model):
         """Returns the student's average rating calculated from the 
         rating count and the accumulated rating"""
         return round((accumulated_rating/rating_count)*2)/2 if rating_count != 0 else 0
+    
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
 
 
 class CollaborationRequest(models.Model):
@@ -63,9 +66,9 @@ class CollaborationRequest(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
-    deadline = models.DateTimeField()
+    deadline = models.DateField()
     image = models.ImageField()
-    publication_date = models.DateField(auto_now=True)
+    publication_date = models.DateField(auto_now_add=True)
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaboration_requests')
     offerers = models.ManyToManyField(Student, blank=True, related_name='offerer_collaboration_requests')
 
@@ -85,9 +88,9 @@ class Collaboration(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
-    deadline = models.DateTimeField()
+    deadline = models.DateField()
     image = models.ImageField()
-    publication_date = models.DateTimeField(auto_now=True)
+    publication_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES)
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaborations')
     collaborator = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='collaborator_collaborations')
@@ -99,6 +102,9 @@ class Competence(models.Model):
     students = models.ManyToManyField(Student, blank=True, related_name='competences')
     collaboration_requests = models.ManyToManyField(CollaborationRequest, blank=True, related_name='competences')
     collaborations = models.ManyToManyField(Collaboration, blank=True, related_name='competences')
+
+    def __str__(self):
+        return self.name
 
 
 class Degree(models.Model):
@@ -117,14 +123,7 @@ class Degree(models.Model):
         (FIFTH, '5th'),
         (SIXTH, '6th')
     ]
-    name = models.CharField(max_length=1, choices=get_degrees())
+    name = models.CharField(max_length=3, choices=get_degrees())
     higher_grade = models.CharField(blank=True, max_length=1, choices=HIGHER_GRADE_CHOICES)
     finished = models.BooleanField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='degrees')
-
-    def clean(self):
-        if self.finished == false and self.higher_grade == '':
-            raise ValidationError('The higher grade must not be blank')
-
-        if self.finished == true and self.higher_grade is not '':
-            raise ValidationError('You cannot specify a higher grade if the degree is finished')
