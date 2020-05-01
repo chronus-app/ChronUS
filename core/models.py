@@ -55,7 +55,12 @@ class Student(models.Model):
     def average_rating(self):
         """Returns the student's average rating calculated from the 
         rating count and the accumulated rating"""
-        return round((accumulated_rating/rating_count)*2)/2 if rating_count != 0 else 0
+        return round((self.accumulated_rating/self.rating_count)*2)/2 if self.rating_count != 0 else 0
+    
+    @property
+    def full_name(self):
+        """Returns the user's full name"""
+        return f'{self.user.first_name} {self.user.last_name}'
     
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
@@ -67,7 +72,6 @@ class CollaborationRequest(models.Model):
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
     deadline = models.DateField()
-    image = models.ImageField()
     publication_date = models.DateField(auto_now_add=True)
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaboration_requests')
     offerers = models.ManyToManyField(Student, blank=True, related_name='offerer_collaboration_requests')
@@ -89,7 +93,6 @@ class Collaboration(models.Model):
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
     deadline = models.DateField()
-    image = models.ImageField()
     publication_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES)
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaborations')

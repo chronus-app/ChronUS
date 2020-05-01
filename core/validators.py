@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 
 
 def validate_minutes(value):
-    minutes = ['15', '30', '45']
+    minutes = ['25', '50', '75']
 
     if not float(value).is_integer():
         decimal_digits = str(value).split('.')[1]

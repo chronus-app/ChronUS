@@ -2,12 +2,13 @@ from django.contrib.auth import get_user_model, authenticate
 from django.shortcuts import get_object_or_404
 from django.db.transaction import atomic
 from rest_framework import serializers
-from core.models import Student, Degree, Competence
+from core.models import Student, Degree, Competence, CollaborationRequest
 from drf_extra_fields.fields import Base64ImageField
+from datetime import date
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User"""
+    """User serializer"""
     class Meta:
         model = get_user_model()
         fields = ('first_name', 'last_name', 'email', 'password')
@@ -19,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DegreeSerializer(serializers.ModelSerializer):
-    """Serializer for Degree"""
+    """Degree serializer"""
     class Meta:
         model = Degree
         fields = ('name', 'higher_grade', 'finished',)
@@ -37,14 +38,14 @@ class DegreeSerializer(serializers.ModelSerializer):
 
 
 class CompetenceSerializer(serializers.ModelSerializer):
-    """Serializer for Competence"""
+    """Competence serializer"""
     class Meta:
         model = Competence
         fields = ('name',)
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    """Serializer for Student"""
+    """Student serializer"""
     user = UserSerializer(required=True)
     profile_image = Base64ImageField(required=False)
     degrees = DegreeSerializer(many=True, required=True, allow_empty=False)
@@ -85,8 +86,18 @@ class StudentSerializer(serializers.ModelSerializer):
         return student
 
 
+class StudentShortSerializer(serializers.ModelSerializer):
+    """Short serializer for student"""
+    id = serializers.IntegerField(source='user.id')
+
+    class Meta:
+        model = Student
+        fields = ('id', 'full_name', 'profile_image', 'average_rating',)
+        read_only_field = ('id',)
+
+
 class AuthTokenSerializer(serializers.Serializer):
-    """Serializer for authentication token"""
+    """Authentication token serializer"""
     email = serializers.CharField()
     password = serializers.CharField(
         style={'input_type': 'password'},
@@ -107,4 +118,85 @@ class AuthTokenSerializer(serializers.Serializer):
             
             data['user'] = user
             return data
+
+
+class CollaborationRequestSerializer(serializers.ModelSerializer):
+    """Collaboration request serializer"""
+    id = serializers.IntegerField(read_only=True)
+    competences = CompetenceSerializer(many=True, required=False)
+    applicant = StudentShortSerializer(read_only=True)
+    offerers = StudentShortSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CollaborationRequest
+        fields = ('id','title', 'description', 'requested_time', 'deadline', 'competences', 'applicant', 'offerers')
+        read_only_fields = ('id', 'applicant', 'offerers')
     
+    def validate(self, data):
+        """Check that the requested time is less than or equal to the applicant's available time.
+           Check that the deadline is greater than or equal to the current date.
+        """
+        applicant = None
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            applicant = request.user.student
+
+        if data['requested_time'] > applicant.available_time:
+            raise serializers.ValidationError('The requested time must be less than or equal to your available time')
+
+        if data['deadline'] < date.today():
+            raise serializers.ValidationError('The deadline must be greater than or equal to the current date')
+        
+        return data
+    
+    @atomic
+    def create(self, validated_data):
+        """Create a new collaboration request and return it"""
+        applicant = None
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            applicant = request.user.student
+        
+        applicant.available_time -= validated_data['requested_time']
+        applicant.save()
+
+        collaboration_request = CollaborationRequest.objects.create(
+                        title=validated_data.pop('title'),
+                        description=validated_data.pop('description', ''),
+                        requested_time=validated_data.pop('requested_time'),
+                        deadline=validated_data.pop('deadline'),
+                        applicant=applicant
+                        )
+        
+        competences_data = validated_data.pop('competences', None)
+        if competences_data:
+            for competence in competences_data:
+                retrieved_competence = get_object_or_404(Competence, name=competence['name'])
+                retrieved_competence.collaboration_requests.add(collaboration_request)
+
+        return collaboration_request
+
+
+class CollaborationRequestOfferSerializer(serializers.ModelSerializer):
+    """Serializer for offering collaboration"""
+    id = serializers.IntegerField(read_only=True)
+    offerers = StudentShortSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CollaborationRequest
+        fields = ('id', 'offerers',)
+    
+    def update(self, instance, validated_data):
+        """Add the logged student to the collaboration request's offerers"""
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            student = request.user.student
+
+        if student == instance.applicant:
+            raise serializers.ValidationError('You cannot offer collaboration in one of your collaboration requests')
+
+        if student in instance.offerers.all():
+            raise serializers.ValidationError('You\'ve already offered to collaborate on this collaboration request')
+
+        instance.offerers.add(student)
+        return instance
