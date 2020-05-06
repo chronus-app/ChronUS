@@ -13,7 +13,7 @@ app_name = 'core'
 
 router = DefaultRouter()
 router.register(r'collaboration-requests', views.CollaborationRequestViewSet, basename='collaboration-requests')
-urlpatterns = router.urls
+router.register(r'collaborations', views.CollaborationViewSet, basename='collaborations')
 
 urlpatterns = [
     path('students/', views.CreateStudentView.as_view(), name='create-student'),

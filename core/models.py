@@ -10,7 +10,6 @@ from core.degrees_extractor import get_degrees
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
-        """Creates and saves new user"""
         if not email:
             raise ValueError('Users must have an email address')
         user = self.model(email=self.normalize_email(email), **extra_fields)
@@ -20,7 +19,6 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password):
-        """Creates and saves a new superuser"""
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_superuser = True
@@ -30,7 +28,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom user model that supports using email instead of username"""
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -43,7 +40,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Student(models.Model):
-    """University student"""
     description = models.TextField(blank=True)
     profile_image = models.ImageField(blank=True)
     rating_count = models.PositiveIntegerField(blank=True, null=True, default=0)
@@ -53,13 +49,10 @@ class Student(models.Model):
 
     @property
     def average_rating(self):
-        """Returns the student's average rating calculated from the 
-        rating count and the accumulated rating"""
         return round((self.accumulated_rating/self.rating_count)*2)/2 if self.rating_count != 0 else 0
     
     @property
     def full_name(self):
-        """Returns the user's full name"""
         return f'{self.user.first_name} {self.user.last_name}'
     
     def __str__(self):
@@ -67,7 +60,6 @@ class Student(models.Model):
 
 
 class CollaborationRequest(models.Model):
-    """Collaboration request that students may publish"""
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
@@ -78,7 +70,6 @@ class CollaborationRequest(models.Model):
 
 
 class Collaboration(models.Model):
-    """Collaboration that students exchange"""
     IN_PROGRESS = 'IP'
     CANCELLED = 'CA'
     PENDING_FINAL = 'PF'
@@ -93,14 +84,12 @@ class Collaboration(models.Model):
     description = models.TextField(blank=True)
     requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
     deadline = models.DateField()
-    publication_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, default='IP')
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaborations')
     collaborator = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='collaborator_collaborations')
 
 
 class Competence(models.Model):
-    """Competence that a user can have"""
     name = models.CharField(max_length=100)
     students = models.ManyToManyField(Student, blank=True, related_name='competences')
     collaboration_requests = models.ManyToManyField(CollaborationRequest, blank=True, related_name='competences')
@@ -111,7 +100,6 @@ class Competence(models.Model):
 
 
 class Degree(models.Model):
-    """Univerisity degree"""
     FIRST = '1'
     SECOND = '2'
     THIRD = '3'
