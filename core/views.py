@@ -1,16 +1,25 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from core.models import CollaborationRequest, Collaboration
-from core.serializers import StudentSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
+from core.serializers import StudentSerializer, UserSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
 from core.exceptions import ResourcePermissionException
 
 
 class CreateStudentView(generics.CreateAPIView):
     serializer_class = StudentSerializer
     permission_classes = []
+
+
+class RetrieveLoggedUserView(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class Logout(APIView):

@@ -20,5 +20,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('collaboration-requests/<int:id>/offer/', views.CollaborationRequestOfferView.as_view(), name='offer-collaboration-request'),
     path('token/', obtain_auth_token),
+    path('users/me/', views.RetrieveLoggedUserView.as_view({'get': 'retrieve'})),
     path('logout/', views.Logout.as_view())
 ]

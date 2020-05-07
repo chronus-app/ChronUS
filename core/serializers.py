@@ -13,7 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('first_name', 'last_name', 'email', 'password')
+        fields = ('id','first_name', 'last_name', 'email', 'password')
+        read_only_fields = ('id',)
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5, 'max_length': 32}}
     
     def create(self, validated_data):
@@ -94,7 +95,7 @@ class StudentShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('id', 'full_name', 'profile_image', 'average_rating',)
-        read_only_field = ('id',)
+        read_only_fields = ('id',)
 
 
 class AuthTokenSerializer(serializers.Serializer):
