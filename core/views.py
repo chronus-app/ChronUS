@@ -77,7 +77,7 @@ class CollaborationViewSet(mixins.CreateModelMixin,
     def get_queryset(self):
         student = self.request.user.student
 
-        return Collaboration.objects.filter(Q(applicant=student) | Q(collaborator=student))
+        return Collaboration.objects.filter(Q(applicant=student) | Q(collaborator=student)).filter(deadline__gte=date.today())
     
     def get_serializer_class(self):
         if self.action == 'list':
@@ -91,5 +91,7 @@ class CollaborationViewSet(mixins.CreateModelMixin,
         student = request.user.student
         collaboration = get_object_or_404(Collaboration, id=kwargs['id'])
         if not student == collaboration.applicant and not student == collaboration.collaborator:
-            raise ResourcePermissionException
+            raise ResourcePermissionExceptionç
+        if collaboration.deadline < date.today():
+            raise ResourcePermissionException('This collaboration has expired')
         return super().retrieve(self, request, *args, **kwargs)    
