@@ -16,10 +16,11 @@ router.register(r'collaboration-requests', views.CollaborationRequestViewSet, ba
 router.register(r'collaborations', views.CollaborationViewSet, basename='collaborations')
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('students/', views.CreateStudentView.as_view(), name='create-student'),
     path('students/me/', views.RetrieveLoggedStudentView.as_view({'get': 'retrieve'})),
-    path('', include(router.urls)),
     path('collaboration-requests/<int:id>/offer/', views.CollaborationRequestOfferView.as_view(), name='offer-collaboration-request'),
     path('token/', obtain_auth_token),
-    path('logout/', views.Logout.as_view())
+    path('logout/', views.Logout.as_view()),
+    path('competences/', views.ListCompetencesView.as_view())
 ]

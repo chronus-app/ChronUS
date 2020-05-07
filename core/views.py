@@ -4,8 +4,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from core.models import CollaborationRequest, Collaboration, Student
-from core.serializers import StudentSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
+from core.models import CollaborationRequest, Collaboration, Student, Competence
+from core.serializers import (StudentSerializer, CollaborationRequestSerializer, 
+CollaborationRequestOfferSerializer, CollaborationListSerializer, 
+CollaborationRetrieveSerializer, CollaborationCreateSerializer, CompetenceSerializer)
 from core.exceptions import ResourcePermissionException
 from datetime import date
 
@@ -94,4 +96,10 @@ class CollaborationViewSet(mixins.CreateModelMixin,
             raise ResourcePermissionExceptionç
         if collaboration.deadline < date.today():
             raise ResourcePermissionException('This collaboration has expired')
-        return super().retrieve(self, request, *args, **kwargs)    
+        return super().retrieve(self, request, *args, **kwargs)
+
+
+class ListCompetencesView(generics.ListAPIView):
+    serializer_class = CompetenceSerializer
+    queryset = Competence.objects.all()
+    permission_classes = []
