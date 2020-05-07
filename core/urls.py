@@ -17,9 +17,9 @@ router.register(r'collaborations', views.CollaborationViewSet, basename='collabo
 
 urlpatterns = [
     path('students/', views.CreateStudentView.as_view(), name='create-student'),
+    path('students/me/', views.RetrieveLoggedStudentView.as_view({'get': 'retrieve'})),
     path('', include(router.urls)),
     path('collaboration-requests/<int:id>/offer/', views.CollaborationRequestOfferView.as_view(), name='offer-collaboration-request'),
     path('token/', obtain_auth_token),
-    path('users/me/', views.RetrieveLoggedUserView.as_view({'get': 'retrieve'})),
     path('logout/', views.Logout.as_view())
 ]

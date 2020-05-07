@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from core.models import CollaborationRequest, Collaboration
-from core.serializers import StudentSerializer, UserSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
+from core.models import CollaborationRequest, Collaboration, Student
+from core.serializers import StudentSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
 from core.exceptions import ResourcePermissionException
 
 
@@ -14,12 +14,12 @@ class CreateStudentView(generics.CreateAPIView):
     permission_classes = []
 
 
-class RetrieveLoggedUserView(viewsets.ModelViewSet):
-    queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+class RetrieveLoggedStudentView(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
 
     def get_object(self):
-        return self.request.user
+        return self.request.user.student
 
 
 class Logout(APIView):

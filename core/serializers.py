@@ -55,7 +55,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('description', 'user', 'profile_image', 'degrees', 'competences',)
+        fields = ('description', 'user', 'profile_image', 'degrees', 'competences', 'available_time',)
+        read_only_fields = ('available_time',)
 
     @atomic
     def create(self, validated_data):
