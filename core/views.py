@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from core.models import CollaborationRequest, Collaboration, Student
 from core.serializers import StudentSerializer, CollaborationRequestSerializer, CollaborationRequestOfferSerializer, CollaborationListSerializer, CollaborationRetrieveSerializer, CollaborationCreateSerializer
 from core.exceptions import ResourcePermissionException
-
+from datetime import date
 
 class CreateStudentView(generics.CreateAPIView):
     serializer_class = StudentSerializer
@@ -36,24 +36,30 @@ class CollaborationRequestViewSet(mixins.CreateModelMixin,
     lookup_field = 'id'
 
     def get_queryset(self):
-        queryset = CollaborationRequest.objects.all()
+        queryset = CollaborationRequest.objects.filter(deadline__gte=date.today())
 
         student = self.request.user.student
         
         applicant_id = self.request.query_params.get('applicant_id', None)
         if applicant_id is not None:
             if int(applicant_id) == student.user.id:
-                queryset = queryset.filter(applicant=applicant_id)
+                queryset = queryset.filter(applicant=applicant_id, deadline__gte=date.today())
             else:
                 raise ResourcePermissionException()
         else:
             offerer_id = self.request.query_params.get('offerer_id', None)
             if offerer_id is not None:
                 if int(offerer_id) == student.user.id:
-                    queryset = queryset.filter(offerers=offerer_id)
+                    queryset = queryset.filter(offerers=offerer_id, deadline__gte=date.today())
                 else: 
                     raise ResourcePermissionException()
         return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        collaboration_request = get_object_or_404(CollaborationRequest, id=kwargs['id'])
+        if collaboration_request.deadline < date.today():
+            raise ResourcePermissionException('This collaboration request has expired')
+        return super().retrieve(self, request, *args, **kwargs)
     
 
 class CollaborationRequestOfferView(generics.UpdateAPIView):
@@ -66,7 +72,8 @@ class CollaborationViewSet(mixins.CreateModelMixin,
                            mixins.ListModelMixin,
                            mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
-    
+    lookup_field = 'id'
+
     def get_queryset(self):
         student = self.request.user.student
 
@@ -82,7 +89,7 @@ class CollaborationViewSet(mixins.CreateModelMixin,
 
     def retrieve(self, request, *args, **kwargs):
         student = request.user.student
-        collaboration = get_object_or_404(Collaboration, id=kwargs['pk'])
+        collaboration = get_object_or_404(Collaboration, id=kwargs['id'])
         if not student == collaboration.applicant and not student == collaboration.collaborator:
             raise ResourcePermissionException
         return super().retrieve(self, request, *args, **kwargs)    

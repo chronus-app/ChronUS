@@ -192,6 +192,9 @@ class CollaborationRequestOfferSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             student = request.user.student
+        
+        if instance.deadline < date.today():
+            raise ResourcePermissionException('This collaboration request has expired')
 
         if student == instance.applicant:
             raise ResourcePermissionException('You cannot offer collaboration in one of your collaboration requests')
