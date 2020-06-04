@@ -11,6 +11,7 @@ CollaborationRetrieveSerializer, CollaborationCreateSerializer, CompetenceSerial
 from core.exceptions import ResourcePermissionException
 from datetime import date
 
+
 class CreateStudentView(generics.CreateAPIView):
     serializer_class = StudentSerializer
     permission_classes = []

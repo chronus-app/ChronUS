@@ -206,13 +206,6 @@ class CollaborationRequestOfferSerializer(serializers.ModelSerializer):
         return instance
 
 
-class MessageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Message
-        fields = ('id', 'text', 'read', 'timestamp', 'sender')
-
-
 class CollaborationListSerializer(serializers.ModelSerializer):
 
     competences = CompetenceSerializer(many=True, required=False)
@@ -227,7 +220,6 @@ class CollaborationRetrieveSerializer(serializers.ModelSerializer):
     competences = CompetenceSerializer(many=True)
     applicant = StudentShortSerializer()
     collaborator = StudentShortSerializer()
-    messages = MessageSerializer(many=True)
 
     class Meta:
         model = Collaboration
@@ -297,7 +289,6 @@ class CollaborationCreateSerializer(serializers.ModelSerializer):
             'requested_time': instance.requested_time,
             'deadline': instance.deadline,
             'competences': competences_array,
-            'collaborator': collaborator_obj,
-            'messages': []    
+            'collaborator': collaborator_obj, 
         }
         

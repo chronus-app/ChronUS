@@ -20,5 +20,7 @@ import notifications.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('core.urls')),
+    path('api/v1/', include('chat.urls')),
     path('notifications/', include(notifications.urls, namespace='notifications')),
+    path('collaborations/', include('chat.urls'))
 ]

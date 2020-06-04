@@ -5,6 +5,7 @@ from rest_framework.settings import api_settings
 from core.serializers import AuthTokenSerializer
 from rest_framework.routers import DefaultRouter
 
+
 ObtainAuthToken.serializer_class = AuthTokenSerializer
 ObtainAuthToken.renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 obtain_auth_token = ObtainAuthToken.as_view()
