@@ -91,12 +91,12 @@
 <script>
 import Vue from 'vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import { required, email, min } from '@/validation/validation';
+import { min } from '@/validation/validation';
 import degrees from '@/data/degrees';
 
 export default {
     name: 'register',
-    data () {
+    data() {
         return {
            name: '',
            surname: '',
@@ -110,7 +110,7 @@ export default {
            selected_competences: [],
            description: '',
            error: null
-        }
+        };
     },
     components: {
         ValidationObserver,
@@ -120,7 +120,7 @@ export default {
         this.fetchCompetences();
     },
     methods: {
-        fetchCompetences () {
+        fetchCompetences() {
             Vue.http.get(
                 'competences/',
                 {
@@ -134,7 +134,7 @@ export default {
                 console.log(error);
             });
         },
-        register () {
+        register() {
             Vue.http.post('students/', 
                 {
                     user: {
@@ -158,7 +158,7 @@ export default {
                 this.error = error;
             });
         },
-        buildDegrees () {
+        buildDegrees() {
             let degrees = [];
             let currentDegree = {name: this.current_degree, higher_grade: this.higher_grade, finished: false};
             degrees.push(currentDegree);
@@ -171,11 +171,11 @@ export default {
             }
             return degrees;
         },
-        buildCompetences () {
+        buildCompetences() {
             let competences = [];
             this.selected_competences.forEach(competenceName => {
                 let competenceObj = {name: competenceName};
-                competences .push(competenceObj);
+                competences.push(competenceObj);
             });
             return competences;
         }
