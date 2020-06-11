@@ -71,7 +71,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
         degrees_data = validated_data.pop('degrees')
         if degrees_data:
-            self.validate_finished_degrees(degrees_data)
+            self.validate_degrees(degrees_data)
             for degree in degrees_data:
                 Degree.objects.create(
                     name=degree['name'],
@@ -89,14 +89,18 @@ class StudentSerializer(serializers.ModelSerializer):
 
         return student
 
-    def validate_finished_degrees(self, degrees_data):
-        degrees_data_finished = []
+    def validate_degrees(self, degrees_data):
+        in_progress_degrees = []
 
         for degree in degrees_data:
-            degrees_data_finished.append(degree['finished'])
+            if degree['finished'] == False:
+                in_progress_degrees.append(degree)
 
-        if False not in degrees_data_finished:
+        if not in_progress_degrees:
             raise serializers.ValidationError('You must specify at least one degree you are pursuing.')
+
+        if len(in_progress_degrees) > 1:
+            raise serializers.ValidationError('You can only be in one degree.')
 
 
 class StudentShortSerializer(serializers.ModelSerializer):
