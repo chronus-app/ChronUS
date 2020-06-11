@@ -28,12 +28,33 @@ const actions = {
             });
         });
         
+    },
+    destroyToken(context) {
+        return new Promise((resolve, reject) => {
+            Vue.http.get('logout/',
+                {
+                    headers: {
+                        'Authorization': `Token ${context.state.token}`
+                    }
+                }
+            )
+            .then(response => {
+                localStorage.removeItem('token');
+                context.commit('destroyToken');
+                resolve(response);
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 }
 
 const mutations = {
     setToken(state, token) {
         state.token = token;
+    },
+    destroyToken(state) {
+        state.token = null;
     }
 }
 

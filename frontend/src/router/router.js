@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 
 import Register from '@/components/Auth/Register';
 import Login from '@/components/Auth/Login';
+import Landing from '@/components/Landing';
 import Home from '@/components/Home';
 
 import store from '@/store/store';
@@ -16,35 +17,48 @@ const router = new VueRouter({
             path: "/register",
             name: "register",
             component: Register,
-            meta: { Auth: false, title: "Regístrate" },
+            meta: { requiresVisitor: true, title: "Regístrate" },
         },
         {
             path: "/login",
             name: "login",
             component: Login,
-            meta: { Auth: false, title: "Accede" },
-            beforeEnter: (to, from, next) => {
-                if (store.getters.loggedIn) {
-                    next({ name: 'home' });
-                } else {
-                    next();
-                }
-            }
+            meta: { requiresVisitor: true, title: "Accede" },
+        },
+        {
+            path: "/",
+            name: "landing",
+            component: Landing,
+            meta: { requiresVisitor: true, title: "Chronus" },
         },
         {
             path: "/home",
             name: "home",
             component: Home,
-            meta: { Auth: true, title: "Chronus" },
-            beforeEnter: (to, from, next) => {
-                if (!store.getters.loggedIn) {
-                    next({ name: 'login' });
-                } else {
-                    next();
-                }
-            }
+            meta: { requiresAuth: true, title: "Inicio" },
         },
     ]
 });
 
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!store.getters.loggedIn) {
+        next({
+          name: 'login',
+        })
+      } else {
+        next()
+      }
+    } else if (to.matched.some(record => record.meta.requiresVisitor)){
+        if (store.getters.loggedIn) {
+            next({
+                name: 'home',
+            })
+        } else {
+            next()
+        }
+    } else {
+        next()
+    }
+  })
 export default router;
