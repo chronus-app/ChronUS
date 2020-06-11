@@ -1,5 +1,8 @@
 <template>
     <div class="col-md-6 offset-md-3">
+        <div class="text-center">
+            <h2>Regístrate</h2>
+        </div>
         <ValidationObserver v-slot="{ handleSubmit }">
             <form @submit.prevent="handleSubmit(register)">
                 <div class="form-group">
@@ -82,7 +85,7 @@
                     <div class="alert alert-danger" v-if="error">Algo ha fallado. Vuelve a intentarlo</div>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Registrarme</button>
+                    <button type="submit" class="btn btn-info">Registrarme</button>
                 </div>
             </form>
         </ValidationObserver>
@@ -153,7 +156,7 @@ export default {
                     }
                 }
             ).then(response => {
-                this.$router.replace('/');
+                this.$router.replace({ name: 'login' });
             }).catch(error => {
                 this.error = error;
             });

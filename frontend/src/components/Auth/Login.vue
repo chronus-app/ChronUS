@@ -1,5 +1,8 @@
 <template>
     <div class="col-md-4 offset-md-4">
+        <div class="text-center">
+            <h2>Inicia sesión</h2>
+        </div>
         <ValidationObserver v-slot="{ handleSubmit }">
             <form @submit.prevent="handleSubmit(login)">
                 <div class="form-group">
@@ -20,7 +23,7 @@
                     <div class="alert alert-danger" v-if="error">Credenciales incorrectos. Vuelve a intentarlo</div>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    <button type="submit" class="btn btn-info">Iniciar sesión</button>
                 </div>
             </form>
         </ValidationObserver>
