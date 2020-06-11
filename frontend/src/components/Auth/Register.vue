@@ -1,7 +1,7 @@
 <template>
     <div class="col-md-6 offset-md-3">
         <ValidationObserver v-slot="{ handleSubmit }">
-            <form @submit.prevent="handleSubmit(onSubmit)">
+            <form @submit.prevent="handleSubmit(register)">
                 <div class="form-group">
                     <label for="name">Nombre</label>
                     <ValidationProvider rules="required" v-slot="{ errors }">
@@ -31,9 +31,9 @@
                     </ValidationProvider>
                 </div>
                 <div class="form-group">
-                    <label for="current-degrees">Titulación/es que estás cursando</label>
+                    <label for="current-degree">Titulación que estás cursando</label>
                     <ValidationProvider rules="required" v-slot="{ errors }">
-                        <select multiple class="form-control" id="current-degrees" v-model="current_degrees">
+                        <select class="form-control" id="current-degree" v-model="current_degree">
                             <option v-for="(value, key) in degrees" :value="key" :key="key">{{ value }}</option>
                         </select>
                         <span class="text-danger">{{ errors[0] }}</span>
@@ -55,13 +55,13 @@
                 </div>
                 <div class="form-group">
                     <label for="finished-degrees">Titulación/es acabada/s</label>
-                    <select multiple class="form-control" id="finished-degrees">
+                    <select multiple class="form-control" id="finished-degrees" v-model="finished_degrees">
                         <option v-for="(value, key) in degrees" :value="key" :key="key">{{ value }}</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="competences">¿En qué quieres ayudar?</label>
-                    <select multiple class="form-control" id="competences">
+                    <select multiple class="form-control" id="competences" v-model="selected_competences">
                         <option v-for="competence in competences" :value="competence.name" :key="competence.name">
                             {{competence.name}}
                         </option>
@@ -76,7 +76,10 @@
                 </div> -->
                 <div class="form-group">
                     <label for="description">Descripción</label>
-                    <textarea type="email" class="form-control" id="description"></textarea>
+                    <textarea type="email" class="form-control" id="description" v-model="description"></textarea>
+                </div>
+                <div class="text-center">
+                    <div class="alert alert-danger" v-if="error">Algo ha fallado. Vuelve a intentarlo</div>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Registrarme</button>
@@ -100,9 +103,13 @@ export default {
            email: '',
            password: '',
            degrees,
-           current_degrees: [],
+           current_degree: '',
            higher_grade: '',
+           finished_degrees: [],
            competences: [],
+           selected_competences: [],
+           description: '',
+           error: null
         }
     },
     components: {
@@ -127,8 +134,50 @@ export default {
                 console.log(error);
             });
         },
-        onSubmit () {
-            alert('Formulario enviado!!');
+        register () {
+            Vue.http.post('students/', 
+                {
+                    user: {
+                        first_name: this.name,
+                        last_name: this.surname,
+                        email: this.email,
+                        password: this.password,
+                    },
+                    degrees: this.buildDegrees(),
+                    competences: this.buildCompetences(),
+                    description: this.description
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }
+            ).then(response => {
+                this.$router.replace('/');
+            }).catch(error => {
+                this.error = error;
+            });
+        },
+        buildDegrees () {
+            let degrees = [];
+            let currentDegree = {name: this.current_degree, higher_grade: this.higher_grade, finished: false};
+            degrees.push(currentDegree);
+
+            if (this.finished_degrees.length) {
+                this.finished_degrees.forEach(degreeName => {
+                    let finishedDegree = {name: degreeName, higher_grade: '', finished: true};
+                    degrees.push(finishedDegree);
+                });
+            }
+            return degrees;
+        },
+        buildCompetences () {
+            let competences = [];
+            this.selected_competences.forEach(competenceName => {
+                let competenceObj = {name: competenceName};
+                competences .push(competenceObj);
+            });
+            return competences;
         }
     }
 }
