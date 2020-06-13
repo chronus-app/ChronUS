@@ -15,7 +15,11 @@
                     <div v-if="collaboration_request.deadline"><h6>Fecha límite: </h6><span>{{ formattedDate }}</span></div>
                     <div class ="mt-2" v-if="collaboration_request.requested_time"><h6>Tiempo solicitado: </h6><span>{{ requestedTime }}</span></div>
                 </div>
-                <button v-if="collaboration_request.applicant && logged_student.user && (collaboration_request.applicant.id != logged_student.user.id)" 
+                <button v-if="collaboration_request.applicant
+                                && collaboration_request.offerers
+                                && logged_student.user 
+                                && (collaboration_request.applicant.id != logged_student.user.id)
+                                && !getOffererIds().includes(logged_student.user.id)" 
                         class="btn btn-outline-info mt-5"
                 >
                     Ofrecer colaboración
@@ -105,6 +109,14 @@ export default {
             }
             return minutesString;
         },
+        getOffererIds() {
+            let offerers = this.collaboration_request.offerers;
+            let offererIds = [];
+            offerers.forEach(offerer => {
+                offererIds.push(offerer.id);
+            })
+            return offererIds;
+        }
     },
     computed: {
         formattedDate() {
