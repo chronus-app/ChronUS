@@ -6,6 +6,7 @@ import Login from '@/components/Auth/Login';
 import Landing from '@/components/Landing';
 import Home from '@/components/Home';
 import CollaborationRequestList from '@/components/CollaborationRequest/CollaborationRequestList';
+import CollaborationRequestDetails from '@/components/CollaborationRequest/CollaborationRequestDetails';
 
 import store from '@/store/store';
 
@@ -43,6 +44,13 @@ const router = new VueRouter({
             name: "collaboration-request-list",
             component: CollaborationRequestList,
             meta: { requiresAuth: true, title: "Solicitudes de colaboración" },
+        },
+        {
+            path: "/collaboration-requests/:id",
+            name: "collaboration-request-details",
+            component: CollaborationRequestDetails,
+            meta: { requiresAuth: true, title: "Detalle de solicitud de colaboración" },
+            props: true
         },
     ]
 });
