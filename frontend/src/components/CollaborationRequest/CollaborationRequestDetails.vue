@@ -15,15 +15,17 @@
                     <div v-if="collaboration_request.deadline"><h6>Fecha límite: </h6><span>{{ formattedDate }}</span></div>
                     <div class ="mt-2" v-if="collaboration_request.requested_time"><h6>Tiempo solicitado: </h6><span>{{ requestedTime }}</span></div>
                 </div>
-                <button v-if="collaboration_request.applicant
-                                && collaboration_request.offerers
-                                && logged_student.user 
-                                && (collaboration_request.applicant.id != logged_student.user.id)
-                                && !getOffererIds().includes(logged_student.user.id)" 
+                <button v-if="showButton" 
                         class="btn btn-outline-info mt-5"
+                        @click="offerCollaboration()"
                 >
                     Ofrecer colaboración
                 </button>
+                <div v-if="showOfferText"
+                    class="text-info mt-5"
+                >
+                    Has ofrecido colaborar en esta solicitud de colaboración
+                </div>
             </div>
         </div>
     </div>
@@ -36,7 +38,7 @@ export default {
     data() {
         return {
             collaboration_request: {},
-            logged_student: {}
+            logged_student: {},
         }
     },
     props: {
@@ -109,13 +111,20 @@ export default {
             }
             return minutesString;
         },
-        getOffererIds() {
-            let offerers = this.collaboration_request.offerers;
-            let offererIds = [];
-            offerers.forEach(offerer => {
-                offererIds.push(offerer.id);
-            })
-            return offererIds;
+        offerCollaboration() {
+            Vue.http.patch(`collaboration-requests/${this.id}/offer/`, {},
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${this.$store.state.auth.token}`
+                    }
+                }
+            )
+            .then(response => {
+               this.collaboration_request.offerers = response.body.offerers;
+            }).catch(error => {
+                console.log(error);
+            });
         }
     },
     computed: {
@@ -141,6 +150,26 @@ export default {
             }
             return requestedTimeString;
         },
+        offererIds() {
+            let offerers = this.collaboration_request.offerers;
+            let offererIds = [];
+            offerers.forEach(offerer => {
+                offererIds.push(offerer.id);
+            })
+            return offererIds;
+        },
+        showButton() {
+            return this.collaboration_request.applicant 
+                    && this.collaboration_request.offerers
+                    && this.logged_student.user 
+                    && (this.collaboration_request.applicant.id != this.logged_student.user.id)
+                    && !this.offererIds.includes(this.logged_student.user.id);
+        },
+        showOfferText() {
+            return this.collaboration_request.offerers 
+                    && this.logged_student.user 
+                    && this.offererIds.includes(this.logged_student.user.id);
+        }
     }
 }
 </script>
