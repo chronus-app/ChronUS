@@ -28,10 +28,12 @@
                 </div>
             </div>
         </div>
+        <OffererList v-if="collaboration_request.offerers && (logged_student.user.id == collaboration_request.applicant.id)" :offerers="collaboration_request.offerers"></OffererList>
     </div>
 </template>
 <script>
 import Vue from 'vue';
+import OffererList from '@/components/Offerer/OffererList';
 
 export default {
     name: 'collaboration-request-details',
@@ -46,6 +48,9 @@ export default {
             type: Number|String,
             required: true
         }
+    },
+    components: {
+        OffererList
     },
     mounted() {
         this.fetchCollaborationRequest();
