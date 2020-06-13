@@ -15,7 +15,11 @@
                     <div v-if="collaboration_request.deadline"><h6>Fecha límite: </h6><span>{{ formattedDate }}</span></div>
                     <div class ="mt-2" v-if="collaboration_request.requested_time"><h6>Tiempo solicitado: </h6><span>{{ requestedTime }}</span></div>
                 </div>
-                <button class="btn btn-outline-info mt-5">Ofrecer colaboración</button>
+                <button v-if="collaboration_request.applicant && logged_student.user && (collaboration_request.applicant.id != logged_student.user.id)" 
+                        class="btn btn-outline-info mt-5"
+                >
+                    Ofrecer colaboración
+                </button>
             </div>
         </div>
     </div>
@@ -28,6 +32,7 @@ export default {
     data() {
         return {
             collaboration_request: {},
+            logged_student: {}
         }
     },
     props: {
@@ -36,8 +41,14 @@ export default {
             required: true
         }
     },
-    created() {
+    mounted() {
         this.fetchCollaborationRequest();
+        this.$store.dispatch('retrieveLoggedStudent')
+        .then(response => {
+           this.logged_student = response.body;
+        }).catch(error => {
+            console.log(error);
+        })
     },
     methods: {
         fetchCollaborationRequest() {
@@ -50,7 +61,6 @@ export default {
                 }
             )
             .then(response => {
-                console.log(response);
                 this.collaboration_request = response.body;
             }).catch(error => {
                 console.log(error);
@@ -94,7 +104,7 @@ export default {
                     break;
             }
             return minutesString;
-        }
+        },
     },
     computed: {
         formattedDate() {
