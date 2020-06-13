@@ -4,7 +4,7 @@
             <div 
                 v-for="collaboration_request in collaboration_requests"
                 :key="collaboration_request.id"
-                class="col-md-4 d-flex align-items-stretch mb-4"
+                class="col-md-4"
             >
                 <CollaborationRequestItem :collaboration_request="collaboration_request"></CollaborationRequestItem>
             </div>

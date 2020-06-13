@@ -1,16 +1,18 @@
 <template>
-    <div class="card" style="width: 100%;">
-        <img style="height: 190px;" class="card-img-top" :src="collaborationRequestImage" :alt="collaboration_request.title">
-        <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ collaboration_request.title }}</h5>
-            <p class="card-text">{{ collaboration_request.description }}</p>
-            <div class="mt-auto">
-                <div>{{ requestedTime }}</div>
-                <div>{{ formattedDate }}</div>
-                <div class="mt-3">{{ collaboration_request.applicant.full_name }}</div>
+<router-link class="router-link" :to="{name: 'collaboration-request-details', params: {id: collaboration_request.id}}">
+    <div class="card">
+            <img style="height: 190px;" class="card-img-top" :src="collaborationRequestImage" :alt="collaboration_request.title">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ collaboration_request.title }}</h5>
+                <p class="card-text">{{ collaboration_request.description }}</p>
+                <div class="mt-auto">
+                    <div>{{ requestedTime }}</div>
+                    <div>{{ formattedDate }}</div>
+                    <div class="mt-3">{{ collaboration_request.applicant.full_name }}</div>
+                </div>
             </div>
-        </div>
     </div>
+</router-link>
 </template>
 <script>
 export default {
@@ -94,3 +96,16 @@ export default {
     
 }
 </script>
+<style scoped>
+    .router-link {
+        color: black;
+        text-decoration: none;
+    }
+    .card {
+        height: 100%;
+        transition: box-shadow .3s;
+    }
+    .card:hover {
+        box-shadow: 0 0 11px rgba(33,33,33,.2);
+    }
+</style>
