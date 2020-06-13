@@ -5,6 +5,7 @@ import Register from '@/components/Auth/Register';
 import Login from '@/components/Auth/Login';
 import Landing from '@/components/Landing';
 import Home from '@/components/Home';
+import CollaborationRequestList from '@/components/CollaborationRequest/CollaborationRequestList';
 
 import store from '@/store/store';
 
@@ -36,6 +37,12 @@ const router = new VueRouter({
             name: "home",
             component: Home,
             meta: { requiresAuth: true, title: "Inicio" },
+        },
+        {
+            path: "/collaboration-requests",
+            name: "collaboration-request-list",
+            component: CollaborationRequestList,
+            meta: { requiresAuth: true, title: "Solicitudes de colaboración" },
         },
     ]
 });

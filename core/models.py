@@ -62,7 +62,7 @@ class Student(models.Model):
 class CollaborationRequest(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
+    requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.25), validate_minutes])
     deadline = models.DateField()
     publication_date = models.DateField(auto_now_add=True)
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaboration_requests')
@@ -82,7 +82,7 @@ class Collaboration(models.Model):
     ]
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.15), validate_minutes])
+    requested_time = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0.25), validate_minutes])
     deadline = models.DateField()
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, default='IP')
     applicant = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='applicant_collaborations')

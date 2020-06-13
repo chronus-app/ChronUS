@@ -124,14 +124,8 @@ export default {
     },
     methods: {
         fetchCompetences() {
-            Vue.http.get(
-                'competences/',
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-            ).then(response => {
+            Vue.http.get('competences/')
+            .then(response => {
                 this.competences = response.body;
             }).catch(error => {
                 console.log(error);
