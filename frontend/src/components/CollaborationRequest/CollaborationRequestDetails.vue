@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <OffererList v-if="collaboration_request.offerers && (logged_student.user.id == collaboration_request.applicant.id)" :offerers="collaboration_request.offerers"></OffererList>
+        <OffererList v-if="showOffererList" :offerers="collaboration_request.offerers"></OffererList>
     </div>
 </template>
 <script>
@@ -41,12 +41,6 @@ export default {
         return {
             collaboration_request: {},
             logged_student: {},
-        }
-    },
-    props: {
-        id: {
-            type: Number|String,
-            required: true
         }
     },
     components: {
@@ -63,7 +57,7 @@ export default {
     },
     methods: {
         fetchCollaborationRequest() {
-            Vue.http.get(`collaboration-requests/${this.id}`,
+            Vue.http.get(`collaboration-requests/${this.$route.params.id}`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -117,7 +111,7 @@ export default {
             return minutesString;
         },
         offerCollaboration() {
-            Vue.http.patch(`collaboration-requests/${this.id}/offer/`, {},
+            Vue.http.patch(`collaboration-requests/${this.$route.params.id}/offer/`, {},
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -174,6 +168,11 @@ export default {
             return this.collaboration_request.offerers 
                     && this.logged_student.user 
                     && this.offererIds.includes(this.logged_student.user.id);
+        },
+        showOffererList() {
+            return this.collaboration_request.offerers
+                    && this.logged_student.user
+                    && (this.logged_student.user.id == this.collaboration_request.applicant.id)
         }
     }
 }

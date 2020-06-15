@@ -50,7 +50,6 @@ const router = new VueRouter({
             name: "collaboration-request-details",
             component: CollaborationRequestDetails,
             meta: { requiresAuth: true, title: "Detalle de solicitud de colaboración" },
-            props: true
         },
     ]
 });
