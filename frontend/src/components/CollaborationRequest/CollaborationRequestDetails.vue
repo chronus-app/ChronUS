@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <OffererList v-if="showOffererList" :offerers="collaboration_request.offerers"></OffererList>
+        <OffererList v-if="showOffererList" :offerers="collaboration_request.offerers" :collaboration_request_id="collaboration_request.id"></OffererList>
     </div>
 </template>
 <script>
