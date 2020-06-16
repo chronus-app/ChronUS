@@ -20,7 +20,21 @@
                     <div class ="mt-2" v-if="collaboration.requested_time"><h6>Tiempo solicitado: </h6><span>{{ requestedTime }}</span></div>
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="content col-md-7">
+                <div class="messages">
+                    <ul>
+                        <li v-for="message in messages" :key="message.id" :class="{ replies: logged_student.user.id == message.sender, sent: !(logged_student.user.id == message.sender) }">
+                            <p>{{ message.text }}</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="message-input">
+                    <div class="wrap">
+                    <input type="text" placeholder="Escribe tu mensaje aquí..." />
+                    <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                    <button class="btn btn-outline-secondary">Enviar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -34,6 +48,8 @@ export default {
         return {
             collaboration: {},
             logged_student: {},
+            messages: [],
+            chatSocket: {}
         }
     },
     mounted() {
@@ -43,7 +59,9 @@ export default {
            this.logged_student = response.body;
         }).catch(error => {
             console.log(error);
-        })
+        });
+        this.fetchMessages();
+        this.openSocketConnection();
     },
     methods: {
         fetchCollaboration() {
@@ -60,6 +78,30 @@ export default {
             }).catch(error => {
                 console.log(error);
             });
+        },
+        fetchMessages() {
+            Vue.http.get(`messages/?collaboration_id=${this.$route.params.id}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${this.$store.state.auth.token}`
+                    }
+                }
+            )
+            .then(response => {
+                this.messages = response.body;
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        openSocketConnection() {
+            this.chatSocket = new WebSocket(
+                'ws://127.0.0.1:8000'
+                + '/ws/collaborations/'
+                + this.$route.params.id
+                + '/?token='
+                + this.$store.state.auth.token
+            );
         },
         collaborationImage() {
             let competences = this.collaboration.competences;
@@ -140,5 +182,106 @@ export default {
 <style scoped>
     .card {
         border: none;
+    }
+    .content .messages {
+        height: 500px;
+        min-height: calc(100% - 93px);
+        max-height: calc(100% - 93px);
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .content .messages::-webkit-scrollbar {
+        width: 8px;
+        background: transparent;
+    }
+    .content .messages::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+    .content .messages ul li {
+        display: inline-block;
+        clear: both;
+        float: left;
+        margin: 15px 15px 5px 15px;
+        width: calc(100% - 25px);
+        font-size: 0.9em;
+    }
+    .content .messages ul li:nth-last-child(1) {
+        margin-bottom: 20px;
+    }
+    .content .messages ul li.sent img {
+    margin: 6px 8px 0 0;
+    }
+    .content .messages ul li.sent p {
+    background: #435f7a;
+    color: #f5f5f5;
+    }
+    .content .messages ul li.replies img {
+    float: right;
+    margin: 6px 0 0 8px;
+    }
+    .content .messages ul li.replies p {
+    background: #f5f5f5;
+    float: right;
+    }
+    .content .messages ul li img {
+    width: 22px;
+    border-radius: 50%;
+    float: left;
+    }
+    .content .messages ul li p {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 205px;
+    line-height: 130%;
+    }
+    .content .message-input {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 99;
+    }
+    .content .message-input .wrap {
+    position: relative;
+    }
+    .content .message-input .wrap input {
+    font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+    float: left;
+    border: none;
+    width: calc(100% - 90px);
+    padding: 11px 32px 10px 8px;
+    font-size: 0.8em;
+    color: #32465a;
+    }
+    .content .message-input .wrap input:focus {
+    outline: none;
+    }
+    .content .message-input .wrap .attachment {
+    position: absolute;
+    right: 60px;
+    z-index: 4;
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #435f7a;
+    opacity: .5;
+    cursor: pointer;
+    }
+    .content .message-input .wrap .attachment:hover {
+    opacity: 1;
+    }
+    .content .message-input .wrap button {
+    float: right;
+    border: none;
+    width: 50px;
+    padding: 12px 0;
+    cursor: pointer;
+    background: #32465a;
+    color: #f5f5f5;
+    }
+    .content .message-input .wrap button:hover {
+    background: #435f7a;
+    }
+    .content .message-input .wrap button:focus {
+    outline: none;
     }
 </style>
