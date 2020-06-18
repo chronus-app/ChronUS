@@ -32,12 +32,13 @@ class ChatConsumer(AsyncConsumer):
             collaboration_id = self.scope['url_route']['kwargs']['collaboration_id']
             collaboration = get_object_or_404(Collaboration, id=collaboration_id)
             student = self.scope['student']
-            Message.objects.create(text=message, sender=student, collaboration=collaboration, read=False)
+            message_object = Message.objects.create(text=message, sender=student, collaboration=collaboration, read=False)
             await self.channel_layer.group_send(
                 self.chat_room,
                 {
                     'type': 'chat_message',
-                    'text': message
+                    'text': str({'id': message_object.id, 'text': message, 'sender': message_object.sender.user.id}),
+                    
                 }
             )
 

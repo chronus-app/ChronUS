@@ -21,18 +21,17 @@
                 </div>
             </div>
             <div class="content col-md-7">
-                <div class="messages">
+                <div id ="messages" class="messages">
                     <ul>
-                        <li v-for="message in messages" :key="message.id" :class="{ replies: logged_student.user.id == message.sender, sent: !(logged_student.user.id == message.sender) }">
+                        <li v-for="message in messages" :key="message.id" :class="{ replies: logged_student.user && logged_student.user.id == message.sender, sent: logged_student.user && !(logged_student.user.id == message.sender) }">
                             <p>{{ message.text }}</p>
                         </li>
                     </ul>
                 </div>
                 <div class="message-input">
                     <div class="wrap">
-                    <input type="text" placeholder="Escribe tu mensaje aquí..." />
-                    <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-                    <button class="btn btn-outline-secondary">Enviar</button>
+                        <input id="chat-message-input" type="text" placeholder="Escribe tu mensaje aquí..." @keyup.enter="clickSend()"/>
+                        <button id="chat-message-submit" class="btn btn-outline-secondary" @click="sendMessage()">Enviar</button>
                     </div>
                 </div>
             </div>
@@ -53,15 +52,26 @@ export default {
         }
     },
     mounted() {
+        
         this.fetchCollaboration();
         this.$store.dispatch('retrieveLoggedStudent')
         .then(response => {
-           this.logged_student = response.body;
+            this.logged_student = response.body;
+            this.fetchMessages()
+            this.openSocketConnection();
+            let vm = this;
+            this.chatSocket.onmessage = function(event) {
+                let messageString = event.data.split('\'').join('"');
+                let messageObject = JSON.parse(messageString);
+                vm.messages.push(messageObject);
+            }
         }).catch(error => {
             console.log(error);
         });
-        this.fetchMessages();
-        this.openSocketConnection();
+    },
+    updated() {
+        var messagesDiv = document.getElementById("messages");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight - messagesDiv.clientHeight;
     },
     methods: {
         fetchCollaboration() {
@@ -142,6 +152,15 @@ export default {
             }
             return minutesString;
         },
+        clickSend() {
+            document.querySelector('#chat-message-submit').click();
+        },
+        sendMessage() {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            this.chatSocket.send(message);
+            messageInputDom.value = '';
+        },
     },
     computed: {
         formattedDate() {
@@ -176,7 +195,7 @@ export default {
                     && this.collaboration.applicant 
                     && (this.logged_student.user.id == this.collaboration.collaborator.id);
         },
-    }
+    },
 }
 </script>
 <style scoped>

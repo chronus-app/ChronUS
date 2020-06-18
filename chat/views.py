@@ -22,7 +22,7 @@ class ListMessagesView(generics.ListAPIView):
         collaboration_id = self.request.query_params.get('collaboration_id', None)
         collaboration = get_object_or_404(Collaboration, id=collaboration_id)
         if collaboration.applicant == student or collaboration.collaborator == student:
-            queryset = Message.objects.order_by('timestamp').filter(collaboration=collaboration_id)[:10]
+            queryset = Message.objects.order_by('timestamp').filter(collaboration=collaboration_id)
             return queryset
         else:
             raise ResourcePermissionException
