@@ -22,6 +22,9 @@
                     <router-link :to="{ name: 'my-collaboration-request-list' }" class="nav-link">Mis solicitudes de colaboración</router-link>
                 </li>
                 <li v-if="loggedIn" class="nav-item">
+                    <router-link :to="{ name: 'my-offer-list' }" class="nav-link">Mis ofrecimientos de colaboración</router-link>
+                </li>
+                <li v-if="loggedIn" class="nav-item">
                     <router-link :to="{ name: 'collaboration-request-creation' }" class="nav-link">Crear solicitud de colaboración</router-link>
                 </li>
                 <li v-if="loggedIn" class="nav-item"><button @click="logout()" class="btn btn-outline-danger my-2 my-sm-0">Cerrar sesión</button></li>

@@ -8,6 +8,7 @@ import Home from '@/components/Home';
 import CollaborationRequestCreation from '@/components/CollaborationRequest/CollaborationRequestCreation';
 import CollaborationRequestList from '@/components/CollaborationRequest/CollaborationRequestList';
 import MyCollaborationRequestList from '@/components/CollaborationRequest/MyCollaborationRequestList';
+import MyOfferList from '@/components/CollaborationRequest/MyOfferList';
 import CollaborationRequestDetails from '@/components/CollaborationRequest/CollaborationRequestDetails';
 import CollaborationDetails from '@/components/Collaboration/CollaborationDetails';
 import Error404 from '@/components/404';
@@ -60,6 +61,12 @@ const router = new VueRouter({
             name: "my-collaboration-request-list",
             component: MyCollaborationRequestList,
             meta: { requiresAuth: true, title: "Mis solicitudes de colaboración" },
+        },
+        {
+            path: "/collaboration-offers/",
+            name: "my-offer-list",
+            component: MyOfferList,
+            meta: { requiresAuth: true, title: "Mis ofrecimientos de colaboración" },
         },
         {
             path: "/collaboration-requests/:id",

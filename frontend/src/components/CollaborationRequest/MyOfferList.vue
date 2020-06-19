@@ -16,7 +16,7 @@ import Vue from 'vue';
 import CollaborationRequestItem from '@/components/CollaborationRequest/CollaborationRequestItem';
 
 export default {
-    name: 'my-collaboration-request-list',
+    name: 'my-offer-list',
     data() {
         return {
             collaboration_requests: [],
@@ -37,7 +37,7 @@ export default {
     },
     methods: {
         fetchCollaborationRequests() {
-            Vue.http.get(`collaboration-requests/?applicant_id=${this.logged_student.user.id}`,
+            Vue.http.get(`collaboration-requests/?offerer_id=${this.logged_student.user.id}`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
