@@ -17,11 +17,6 @@
 <script>
 export default {
     name: 'collaboration-request-item',
-    data () {
-        return {
-            publicPath: process.env.BASE_URL
-        }
-    },
     props: {
         collaboration_request:  {
             type: Object,
