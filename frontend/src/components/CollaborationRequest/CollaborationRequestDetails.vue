@@ -171,6 +171,7 @@ export default {
         },
         showOffererList() {
             return this.collaboration_request.offerers
+                    && this.collaboration_request.offerers.length > 0
                     && this.logged_student.user
                     && (this.logged_student.user.id == this.collaboration_request.applicant.id)
         }
