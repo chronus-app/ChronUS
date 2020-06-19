@@ -157,7 +157,7 @@ class CollaborationRequestSerializer(serializers.ModelSerializer):
             applicant = request.user.student
 
         if data['requested_time'] > applicant.available_time:
-            raise serializers.ValidationError('The requested time must be less than or equal to your available time')
+            raise serializers.ValidationError('No tienes tanto tiempo disponible')
 
         if data['deadline'] < date.today():
             raise serializers.ValidationError('The deadline must be greater than or equal to the current date')

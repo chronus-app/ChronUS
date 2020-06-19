@@ -38,6 +38,9 @@
                         </option>
                     </select>
                 </div>
+                <div class="text-center mb-2">
+                    <span v-if="error" class="text-danger">{{ error }}</span>
+                </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-info">Publicar</button>
                 </div>
@@ -60,6 +63,7 @@ export default {
             requested_time: '',
             competences: [],
             selected_competences: [],
+            error: ''
         }
     },
     components: {
@@ -96,7 +100,7 @@ export default {
             ).then(response => {
                 this.$router.replace({ name: 'collaboration-request-list' });
             }).catch(error => {
-                this.error = error;
+                this.error = error.body.non_field_errors[0];
             });
         },
         buildCompetences() {
