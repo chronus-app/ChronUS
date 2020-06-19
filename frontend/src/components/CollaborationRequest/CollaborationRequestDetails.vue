@@ -8,7 +8,7 @@
                     <p class="card-text">{{ collaboration_request.description }}</p>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" v-if="collaboration_request.applicant">
                 <h5>Publicada por:</h5>
                 <div v-if="collaboration_request.applicant">{{ collaboration_request.applicant.full_name }}</div>
                 <div class="mt-5">
@@ -68,7 +68,7 @@ export default {
             .then(response => {
                 this.collaboration_request = response.body;
             }).catch(error => {
-                console.log(error);
+                this.$router.replace({ name: '404' });
             });
         },
         collaborationRequestImage() {

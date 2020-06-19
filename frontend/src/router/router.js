@@ -9,6 +9,7 @@ import CollaborationRequestCreation from '@/components/CollaborationRequest/Coll
 import CollaborationRequestList from '@/components/CollaborationRequest/CollaborationRequestList';
 import CollaborationRequestDetails from '@/components/CollaborationRequest/CollaborationRequestDetails';
 import CollaborationDetails from '@/components/Collaboration/CollaborationDetails';
+import Error404 from '@/components/404';
 
 import store from '@/store/store';
 
@@ -64,6 +65,12 @@ const router = new VueRouter({
             name: "collaboration-details",
             component: CollaborationDetails,
             meta: { requiresAuth: true, title: "Detalle de colaboración" },
+        },
+        {
+            path: "/404",
+            name: "404",
+            component: Error404,
+            meta: { requiresAuth: true, title: "Error 404" },
         },
     ]
 });

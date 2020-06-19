@@ -1,6 +1,6 @@
 <template>
     <div class="container pt-5">
-        <div class="row">
+        <div class="row" v-if="collaboration.title">
             <div class="card col-md-5">
                 <img  v-if="collaboration.competences" style="height: 300px;" class="card-img-top" :src="collaborationImage()" :alt="collaboration.title">
                 <div class="card-body pl-0">
@@ -86,7 +86,7 @@ export default {
             .then(response => {
                 this.collaboration = response.body;
             }).catch(error => {
-                console.log(error);
+                this.$router.replace({ name: '404' });
             });
         },
         fetchMessages() {
