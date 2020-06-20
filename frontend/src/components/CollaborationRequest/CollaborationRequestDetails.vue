@@ -75,7 +75,7 @@ export default {
             let competences = this.collaboration_request.competences;
             let imagePath = '';
             if (!competences.length) {
-                imagePath =  require('@/assets/i_dont_know.jpg');
+                imagePath =  require('@/assets/colors.png');
             } else if (competences.length > 1) {
                 imagePath = require('@/assets/colors.png');
             } else if (competences[0].name == 'Actividad física') {
