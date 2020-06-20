@@ -15,17 +15,19 @@
                 <li v-if="!loggedIn" class="nav-item">
                     <router-link :to="{ name: 'register' }" class="nav-link">Registrarse</router-link>
                 </li>
-                <li v-if="loggedIn" class="nav-item">
-                    <router-link :to="{ name: 'collaboration-request-list' }" class="nav-link">Solicitudes de colaboración</router-link>
-                </li>
-                <li v-if="loggedIn" class="nav-item">
-                    <router-link :to="{ name: 'my-collaboration-request-list' }" class="nav-link">Mis solicitudes de colaboración</router-link>
+                <li v-if="loggedIn" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Solicitudes de colaboración
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <router-link :to="{ name: 'collaboration-request-list' }" class="dropdown-item">Explorar</router-link>
+                        <router-link :to="{ name: 'my-collaboration-request-list' }" class="dropdown-item">Mis solicitudes</router-link>
+                        <div class="dropdown-divider"></div>
+                        <router-link :to="{ name: 'collaboration-request-creation' }" class="dropdown-item">Crear solicitud</router-link>
+                    </div>
                 </li>
                 <li v-if="loggedIn" class="nav-item">
                     <router-link :to="{ name: 'my-offer-list' }" class="nav-link">Mis ofrecimientos de colaboración</router-link>
-                </li>
-                <li v-if="loggedIn" class="nav-item">
-                    <router-link :to="{ name: 'collaboration-request-creation' }" class="nav-link">Crear solicitud de colaboración</router-link>
                 </li>
                 <li v-if="loggedIn" class="nav-item">
                     <router-link :to="{ name: 'collaboration-list' }" class="nav-link">Mis colaboraciones</router-link>
