@@ -1,5 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <router-link v-if="loggedIn" :to="{ name: 'home' }" class="nav-link text-secondary"><BIconHouse font-scale="2"></BIconHouse></router-link>
+        <router-link v-else :to="{ name: 'landing' }" class="nav-link text-secondary"><BIconHouse font-scale="2"></BIconHouse></router-link>
         <div class="d-flex flex-grow-1">
             <div class="w-100 text-right">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar7">
@@ -23,7 +25,7 @@
                         <router-link :to="{ name: 'collaboration-request-list' }" class="dropdown-item">Explorar</router-link>
                         <router-link :to="{ name: 'my-collaboration-request-list' }" class="dropdown-item">Mis solicitudes</router-link>
                         <div class="dropdown-divider"></div>
-                        <router-link :to="{ name: 'collaboration-request-creation' }" class="dropdown-item">Crear solicitud</router-link>
+                        <router-link :to="{ name: 'collaboration-request-creation' }" class="dropdown-item">Solicitar colaboración</router-link>
                     </div>
                 </li>
                 <li v-if="loggedIn" class="nav-item">
@@ -38,8 +40,13 @@
     </nav>
 </template>
 <script>
+import { BIconHouse } from 'bootstrap-vue';
+
 export default {
     name: 'navbar',
+    components: {
+        BIconHouse
+    },
     methods: {
         logout() {
             this.$store.dispatch('destroyToken')

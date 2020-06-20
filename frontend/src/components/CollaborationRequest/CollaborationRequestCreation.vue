@@ -98,7 +98,7 @@ export default {
                     }
                 }
             ).then(response => {
-                this.$router.replace({ name: 'collaboration-request-list' });
+                this.$router.replace({ name: 'my-collaboration-request-list' });
             }).catch(error => {
                 this.error = error.body.non_field_errors[0];
             });
