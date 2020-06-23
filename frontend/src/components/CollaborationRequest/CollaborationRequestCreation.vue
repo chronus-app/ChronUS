@@ -31,7 +31,7 @@
                     </ValidationProvider>
                 </div>
                 <div class="form-group">
-                    <label for="competences">¿En qué quieres ayudar?</label>
+                    <label for="competences">¿En qué necesitas ayuda?</label>
                     <select multiple class="form-control" id="competences" v-model="selected_competences">
                         <option v-for="competence in competences" :value="competence.name" :key="competence.name">
                             {{competence.name}}
