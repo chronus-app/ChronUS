@@ -1,16 +1,9 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from chat.models import Message
 from chat.serializers import MessageSerializer
 from core.models import Collaboration
 from core.exceptions import ResourcePermissionException
-
-
-# def room(request, collaboration_id):
-#     return render(request, 'chat/room.html', {
-#         'collaboration_id': collaboration_id
-#     })
 
 
 class ListMessagesView(generics.ListAPIView):
