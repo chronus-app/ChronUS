@@ -65,6 +65,9 @@ export default {
                 let messageObject = JSON.parse(messageString);
                 vm.messages.push(messageObject);
             }
+            this.chatSocket.onclose = function(event) {
+                vm.$router.replace({ name: '404' });
+            }
         }).catch(error => {
             console.log(error);
         });
@@ -159,7 +162,7 @@ export default {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             this.chatSocket.send(message);
-            messageInputDom.value = '';
+            messageInputDom.value = '';            
         },
     },
     computed: {

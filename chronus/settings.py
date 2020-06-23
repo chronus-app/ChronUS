@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'channels',
     'corsheaders',
-    'core',
+    'core.apps.CoreConfig',
     'chat',
     'notifications',
 ]
