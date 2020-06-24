@@ -6,7 +6,7 @@ from core.models import Collaboration, Student
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(check_collaborations, 'interval', seconds=30)
+    scheduler.add_job(check_collaborations, 'interval', seconds=10)
     scheduler.start()
 
 def check_collaborations():
