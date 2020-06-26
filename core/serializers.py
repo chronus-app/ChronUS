@@ -7,6 +7,7 @@ from core.exceptions import ResourcePermissionException
 from chat.models import Message
 from drf_extra_fields.fields import Base64ImageField
 from datetime import date
+from core.mail_sender import send_mail
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -277,6 +278,8 @@ class CollaborationCreateSerializer(serializers.ModelSerializer):
             collaboration.competences.add(competence)
         
         collaboration_request.delete()
+
+        send_mail(student, collaborator)
 
         return collaboration
     
