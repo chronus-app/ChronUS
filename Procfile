@@ -1,1 +1,1 @@
-web: gunicorn chronus.wsgi --log-file -
+web: daphne chronus.asgi:application --port $PORT --bind 0.0.0.0
