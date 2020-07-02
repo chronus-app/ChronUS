@@ -188,3 +188,6 @@ sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN'),
     integrations=[DjangoIntegration()]
 )
+
+#AWS
+from chronus.aws.conf import *
