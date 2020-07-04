@@ -1,6 +1,9 @@
 import os
 import datetime
+import boto3
+from botocore.client import Config
 
+client = boto3.client('s3', config=Config(signature_version='s3v4'))
 
 AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
