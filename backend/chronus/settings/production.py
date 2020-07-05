@@ -28,6 +28,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ORIGIN_WHITELIST = ('https://chronus-webapp.herokuapp.com/')
 
 # Application definition
 
