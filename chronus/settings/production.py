@@ -169,14 +169,14 @@ USE_TZ = True
 AUTH_USER_MODEL = 'core.User'
 
 #Mail config
-# SENDGRID_API_KEY = os.getenv('CHRONUS_API_KEY')
+SENDGRID_API_KEY = os.getenv('CHRONUS_API_KEY')
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.sendgrid.net'
-# EMAIL_HOST_USER = 'apikey'
-# EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 #Sentry config
 import sentry_sdk
