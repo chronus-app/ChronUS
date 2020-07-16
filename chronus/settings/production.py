@@ -25,10 +25,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.herokuapp.com']
 
-CORS_ORIGIN_ALLOW_ALL = DEBUG
-CORS_ORIGIN_WHITELIST = ('https://chronus-webapp.herokuapp.com/')
+CORS_ORIGIN_WHITELIST = ['https://chronus-webapp.herokuapp.com']
 
 # Application definition
 
