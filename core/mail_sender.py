@@ -7,7 +7,7 @@ def send(applicant, collaborator):
     email = collaborator.user.email
 
     send_mail(
-        'Chronus: aceptación de ofrecimiento de colaboración', 
+        'Chronus: TEST ENVÍO CORREO', 
         f'{applicant_name} acaba de aceptar tu ofrecimiento de colaboración.', 
         os.getenv('SENDGRID_USERNAME'), 
         [email], 
