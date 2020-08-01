@@ -99,19 +99,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'chronus',
-#         'USER': 'chronus',
-#         'PASSWORD': 'chronus',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
 import dj_database_url
 from decouple import config
 
@@ -154,27 +142,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATIC_URL = '/static/'
-
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
-
-
 AUTH_USER_MODEL = 'core.User'
 
 #Mail config
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey'
+EMAIL_HOST_USER = 'apikey' 
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -189,10 +163,6 @@ sentry_sdk.init(
 )
 
 #AWS
-# from chronus.aws.conf import *
-# USE_S3 = os.getenv('USE_S3') == 'TRUE'
-
-# if USE_S3:
 AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('STORAGE_BUCKET_NAME')
@@ -203,11 +173,3 @@ AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 AWS_LOCATION = 'static'
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# else:
-#     STATIC_URL = '/staticfiles/'
-#     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-
-# MEDIA_URL = '/mediafiles/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
