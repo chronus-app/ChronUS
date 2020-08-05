@@ -165,7 +165,9 @@ sentry_sdk.init(
 #AWS
 AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
+DEFAULT_FILE_STORAGE = 'chronus.storage_backends.MediaStorage'
 AWS_STORAGE_BUCKET_NAME = os.getenv('STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'eu-west-3'
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
