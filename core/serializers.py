@@ -244,13 +244,22 @@ class CollaborationRetrieveSerializer(serializers.ModelSerializer):
 
 class CollaborationCreateSerializer(serializers.ModelSerializer):
 
-    collaborator = serializers.IntegerField()
-    collaboration_request = serializers.IntegerField()
+    collaborator_id = serializers.IntegerField(write_only=True)
+    collaboration_request = serializers.IntegerField(write_only=True)
+
+    id = serializers.IntegerField(read_only=True)
+    collaborator = StudentShortSerializer(read_only=True)
 
     class Meta:
         model = Collaboration
-        fields = ('collaborator', 'collaboration_request')
-    
+        fields = ('collaborator_id', 'collaboration_request', 'id', 'title', 'description', 'requested_time', 'deadline', 'collaborator')
+        extra_kwargs = {
+            'title': {'read_only': True},
+            'description': {'read_only': True},
+            'requested_time': {'read_only': True},
+            'deadline': {'read_only': True}
+        }
+
     @atomic
     def create(self, validated_data):
 
@@ -262,7 +271,7 @@ class CollaborationCreateSerializer(serializers.ModelSerializer):
         if collaboration_request.applicant != student:
             raise ResourcePermissionException('The collaboration request is not yours')
 
-        collaborator = get_object_or_404(Student, user=validated_data['collaborator'])
+        collaborator = get_object_or_404(Student, user=validated_data['collaborator_id'])
         if collaborator not in collaboration_request.offerers.all():
             raise ResourcePermissionException('This student is not one of the collaboration request\'s colaborators')
 
@@ -282,30 +291,3 @@ class CollaborationCreateSerializer(serializers.ModelSerializer):
         send(student, collaborator)
 
         return collaboration
-    
-    def to_representation(self, instance):
-
-        competences = instance.competences.all()
-        competences_array = []
-        for competence in competences:
-            competence_obj = {}
-            competence_obj['name'] = competence.name
-            competences_array.append(competence_obj)
-
-        collaborator = instance.collaborator
-        collaborator_obj = {}
-        collaborator_obj['id'] = collaborator.user.id
-        collaborator_obj['full_name'] = collaborator.full_name
-        collaborator_obj['profile_image'] = collaborator.profile_image if collaborator.profile_image else None
-        collaborator_obj['average_rating'] = collaborator.average_rating
-
-        return {
-            'id': instance.id,
-            'title': instance.title,
-            'description': instance.description,
-            'requested_time': instance.requested_time,
-            'deadline': instance.deadline,
-            'competences': competences_array,
-            'collaborator': collaborator_obj, 
-        }
-        
