@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'storages',
     'core.apps.CoreConfig',
     'chat',
-    'notifications',
 ]
 
 REST_FRAMEWORK = {
