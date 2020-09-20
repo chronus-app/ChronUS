@@ -1,9 +1,8 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
-from core.models import Student
-from core.models import User
-import pdb
+from core.models import Student, User
+
 
 def create_student(**params):
     user = User.objects.create_user(**params)
@@ -46,6 +45,6 @@ class PublicStudentApiTests(TestCase):
             'password': self.payload['user']['password']
         }
         res = self.client.post('/api/v1/token/', payload)
-        
+
         self.assertIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
