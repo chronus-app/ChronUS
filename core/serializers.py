@@ -239,7 +239,7 @@ class CollaborationRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collaboration
         fields = ('id', 'title', 'description', 'requested_time', 'deadline',
-                 'competences', 'applicant', 'collaborator', 'messages',)
+                 'competences', 'applicant', 'collaborator',)
         
 
 class CollaborationCreateSerializer(serializers.ModelSerializer):
