@@ -48,13 +48,5 @@ class ChatConsumer(AsyncConsumer):
             'text': event['text']
         })
 
-    async def websocket_disconnect(self, event):
-        pass
-    @database_sync_to_async
-    def get_collaboration_messages(self, collaboration_id):
-        return Message.objects.filter(collaboration=collaboration_id)
-    
-    @database_sync_to_async
-    def create_message(self, collaboration_id):
-        return Message.objects.filter(collaboration=collaboration_id)
-       
+
+
